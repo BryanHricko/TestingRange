@@ -1,0 +1,52 @@
+name: ArgoCD Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  # Uncomment to use PR trigger
+  # pull_request:
+  #   branches:
+  #     - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Set up ArgoCD CLI
+    - name: Install ArgoCD CLI
+      run: |
+        curl -sSL https://github.com/argoproj/argo-cd/releases/download/v2.5.7/argocd-linux-amd64 -o /usr/local/bin/argocd
+        chmod +x /usr/local/bin/argocd
+
+    # Authenticate with ArgoCD
+    - name: ArgoCD Login
+      run: |
+        argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
+
+    # Pull the file (assuming it's from GitHub)
+    - name: Pull file from repo
+      run: |
+        # Example: Pull a YAML file from your repo
+        curl -O https://raw.githubusercontent.com/${{ github.repository }}/TestingRange/file.yaml
+
+    # Push the file to ArgoCD (trigger a sync or update)
+    - name: Sync Application with ArgoCD
+      run: |
+        # Example: If your ArgoCD application is linked to a Git repository, trigger a sync
+        argocd app sync your-application-name
+        # Or if you want to push the file directly via ArgoCD, you'd need to update your Git repo for ArgoCD
+        # For example, you could push the file to your GitOps repo and trigger a sync
+        git add TestingRange/file.yaml
+        git commit -m "Updated file for ArgoCD sync"
+        git push
+
+    # Optionally, you can add any status or logging checks
+    - name: Check ArgoCD App Status
+      run: |
+        argocd app get your-application-name
