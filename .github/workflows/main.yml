@@ -23,13 +23,13 @@ jobs:
     # Authenticate with ArgoCD (with hardcoded credentials)
     - name: ArgoCD Login
       run: |
-        argocd login ${{ secrets.ARGOCD_SERVER }} --username "admin" --password "TestPassword" --insecure
+        argocd login ${{ secrets.ARGOCD_SERVER }} --username "admin" --password "OFihMoVH0M3n5yJa" --insecure
 
     # Pull the file (assuming it's from GitHub)
     - name: Pull file from repo
       run: |
         # Example: Pull a YAML file from your repo
-        curl -O https://raw.githubusercontent.com/${{ github.repository }}/main/path/to/your/file.yaml
+        curl -O https://raw.githubusercontent.com/${{ github.repository }}TestingRange/file.yaml
 
     # Push the file to ArgoCD (trigger a sync or update)
     - name: Sync Application with ArgoCD
