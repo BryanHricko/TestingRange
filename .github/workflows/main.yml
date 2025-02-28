@@ -23,7 +23,7 @@ jobs:
     # Authenticate with ArgoCD (use your ArgoCD server URL)
     - name: ArgoCD Login
       run: |
-        argocd login https://localhost:8081 --username "admin" --password "OFihMoVH0M3n5yJa" --insecure
+        argocd login localhost:8081 --username "admin" --password "OFihMoVH0M3n5yJa" --insecure
 
     # Pull the file from the GitHub repository (if applicable)
     - name: Pull file from repo
