@@ -20,10 +20,16 @@ jobs:
         curl -sSL https://github.com/argoproj/argo-cd/releases/download/v2.5.7/argocd-linux-amd64 -o /usr/local/bin/argocd
         chmod +x /usr/local/bin/argocd
 
-    # Authenticate with ArgoCD (use your ArgoCD server URL)
+    # Set up Kubernetes CLI (kubectl)
+    - name: Set up Kubernetes CLI
+      uses: azure/setup-kubectl@v3
+      with:
+        kubeconfig: ${{ secrets.KUBECONFIG_SECRET }}  # GitHub Secret containing the kubeconfig
+
+    # Authenticate with ArgoCD via kubectl (assuming argocd is in the same cluster)
     - name: ArgoCD Login
       run: |
-        argocd login localhost:8081 --username "admin" --password "OFihMoVH0M3n5yJa" --insecure
+        argocd login argocd-server.argocd.svc.cluster.local:8081 --username "admin" --password "OFihMoVH0M3n5yJa" --insecure
 
     # Pull the file from the GitHub repository (if applicable)
     - name: Pull file from repo
@@ -33,9 +39,9 @@ jobs:
     # Sync Application with ArgoCD (replace `your-application-name` with the actual ArgoCD app name)
     - name: Sync Application with ArgoCD
       run: |
-        argocd app sync your-application-name --prune
+        argocd app sync argocd --prune
 
     # Optionally, you can check the status of the ArgoCD application
     - name: Check ArgoCD App Status
       run: |
-        argocd app get your-application-name
+        argocd app get argocd
