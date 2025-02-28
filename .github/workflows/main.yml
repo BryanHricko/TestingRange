@@ -14,19 +14,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Set up Kubernetes CLI (kubectl) with the Kubeconfig secret
+    - name: Set up Kubernetes CLI
+      uses: azure/setup-kubectl@v3
+      with:
+        kubeconfig: ${{ secrets.KUBECONFIG_SECRET }}  # GitHub Secret containing the kubeconfig
+
     # Set up ArgoCD CLI
     - name: Install ArgoCD CLI
       run: |
         curl -sSL https://github.com/argoproj/argo-cd/releases/download/v2.5.7/argocd-linux-amd64 -o /usr/local/bin/argocd
         chmod +x /usr/local/bin/argocd
 
-    # Set up Kubernetes CLI (kubectl)
-    - name: Set up Kubernetes CLI
-      uses: azure/setup-kubectl@v3
-      with:
-        kubeconfig: ${{ secrets.KUBECONFIG_SECRET }}  # GitHub Secret containing the kubeconfig
-
-    # Authenticate with ArgoCD via kubectl (assuming argocd is in the same cluster)
+    # Authenticate with ArgoCD using the Kubernetes API
     - name: ArgoCD Login
       run: |
         argocd login argocd-server.argocd.svc.cluster.local:8081 --username "admin" --password "OFihMoVH0M3n5yJa" --insecure
